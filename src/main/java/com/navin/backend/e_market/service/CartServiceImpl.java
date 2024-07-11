@@ -3,7 +3,9 @@ package com.navin.backend.e_market.service;
 import com.navin.backend.e_market.Repository.*;
 import com.navin.backend.e_market.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CartServiceImpl implements CartService{
 
     @Autowired
@@ -65,6 +67,12 @@ public class CartServiceImpl implements CartService{
         cartItemRepo.delete(cartItem);
 
         return cartRepo.save(cart);
+    }
+
+    public Cart getCart(long cartId){
+        Cart cart=cartRepo.findById(cartId).orElseThrow(()->new RuntimeException("cart not found"));
+
+        return cart;
     }
 
 }

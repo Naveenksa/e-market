@@ -8,4 +8,5 @@ public interface CartService {
     Cart createCart(long custId,long custAddressId);
     Cart additemToCart(Long cartId, Long proDuctId,int quantity);
     Cart removeItemFromCart(long cartId,long itemId);
+    Cart getCart(long cartId);
 }
