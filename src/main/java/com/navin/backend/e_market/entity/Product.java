@@ -12,5 +12,5 @@ public class Product {
     private long id;
     private String productName;
     private String productType;
-    private String price;
+    private double price;
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService
@@ -62,5 +63,17 @@ public class ProductServiceImpl implements ProductService
     {
         return productRepo.findById(id)
                           .orElseThrow(()->new ProductNotFoundException("product not there"));
+    }
+
+    @Override
+    public List<Product> getProductByType(String type) {
+        return productRepo.findByProductType(type)
+                          .orElseThrow(()->new ProductNotFoundException("product not there"));
+    }
+
+    @Override
+    public Product getProductByName(String name) {
+        Product product=productRepo.findByProductName(name);
+        return product;
     }
 }
