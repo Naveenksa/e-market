@@ -1,6 +1,5 @@
 package com.navin.backend.e_market.controller;
 
-import com.navin.backend.e_market.Repository.ProductRepo;
 import com.navin.backend.e_market.entity.Product;
 import com.navin.backend.e_market.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/filter")
-public class FilterProduct {
+public class FilterProductController {
     @Autowired
     ProductService productService;
 

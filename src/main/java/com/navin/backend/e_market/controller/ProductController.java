@@ -1,6 +1,7 @@
 package com.navin.backend.e_market.controller;
 
 import com.navin.backend.e_market.entity.Product;
+import com.navin.backend.e_market.entity.ProductPatch;
 import com.navin.backend.e_market.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,24 +24,41 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
+    @GetMapping
     public ResponseEntity<List<Product>> getAll(){
-        return new ResponseEntity<>(productService.getAll(),HttpStatus.FOUND);
+        return new ResponseEntity<>(productService.getAll(),HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable long id){
         productService.deleteProduct(id);
-        return new ResponseEntity<>("product deleted",HttpStatus.OK);
+        return new ResponseEntity<>("product deleted",HttpStatus.NO_CONTENT);
     }
 
-    @PatchMapping("/update-spec/{id}")
-    public ResponseEntity<Product> updateSpec(@PathVariable long id,@PathVariable Product product){
-        return new ResponseEntity<>(productService.updateRate(id,product),HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product){
+        return new ResponseEntity<>(productService.updateProduct(id,product),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getById(@PathVariable long id){
-        return new ResponseEntity<>(productService.getById(id),HttpStatus.FOUND);
+        return new ResponseEntity<>(productService.getById(id),HttpStatus.OK);
+    }
+    @GetMapping("/product-sort-by-name")
+    public ResponseEntity<Object> getProductSortedByName(){
+        List<Product> products = productService.getSortedProductByName();
+
+        if (products.isEmpty()) {
+            return new ResponseEntity<>("No Product's Available",HttpStatus.NO_CONTENT);
+        }
+
+        return new ResponseEntity<>(products,HttpStatus.OK);
     }
 
+    @PatchMapping("{id}")
+    public ResponseEntity<Product> patchProduct(@PathVariable Long id,
+                                                @RequestBody ProductPatch productPatch) {
+
+        return ResponseEntity.ok(productService.patchProduct(id,productPatch));
+    }
 }

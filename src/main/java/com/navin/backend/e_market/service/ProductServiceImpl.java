@@ -2,14 +2,13 @@ package com.navin.backend.e_market.service;
 
 import com.navin.backend.e_market.Repository.ProductRepo;
 import com.navin.backend.e_market.entity.Product;
+import com.navin.backend.e_market.entity.ProductPatch;
 import com.navin.backend.e_market.exception.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
-
-
-
 
 @Service
 public class ProductServiceImpl implements ProductService
@@ -23,7 +22,7 @@ public class ProductServiceImpl implements ProductService
     {
         List<Product> products=productRepo.findAll();
 
-        if(products==null)
+        if(products.isEmpty())
         {
             throw new ProductNotFoundException("no product");
         }
@@ -31,19 +30,16 @@ public class ProductServiceImpl implements ProductService
     }
 
     @Override
-    public Product updateRate(long proId, Product updatedProduct) {
-
-        Product existProduct=productRepo.findById(proId)
-                                        .orElseThrow(()->new ProductNotFoundException("Product not found"));
-
-      existProduct.setProductName(updatedProduct.getProductName());
-      existProduct.setProductType(updatedProduct.getProductType());
-      existProduct.setPrice(updatedProduct.getPrice());
-      productRepo.save(existProduct);
-
-      return updatedProduct;
+    public Product updateProduct(long proId, Product updatedProduct) {
+        return productRepo.findById(proId)
+                .map(existingProduct -> {
+                    existingProduct.setPrice(updatedProduct.getPrice());
+                    existingProduct.setProductName(updatedProduct.getProductName());
+                    existingProduct.setProductType(updatedProduct.getProductType());
+                    return existingProduct;
+                }).map(productRepo::save)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
-
 
     @Override
     public Product addProduct(Product product) {
@@ -72,11 +68,27 @@ public class ProductServiceImpl implements ProductService
         return productRepo.findByProductType(type)
                           .orElseThrow(()->new ProductNotFoundException("product not there"));
     }
-
     @Override
     public Product getProductByName(String name) {
-        Product product=productRepo.findByProductName(name);
-        return product;
+        return productRepo.findByProductName(name);
+    }
+    @Override
+    public List<Product> getSortedProductByName() {
+
+        return productRepo.findAll()
+                .stream()
+                .filter(p->p.getPrice()>10 && p.getPrice()<100)
+                .filter(p->p.getId()>1 && p.getId()<100)
+                .sorted(Comparator.comparing(Product::getProductName))
+                .toList();
     }
 
+    @Override
+    public Product patchProduct(Long id, ProductPatch productPatch) {
+        return productRepo.findById(id)
+                .map(product ->{
+                product.setPrice(productPatch.price());
+                return product;
+                }).orElseThrow();
+    }
 }
