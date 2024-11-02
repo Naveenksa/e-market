@@ -17,8 +17,14 @@ public class CustomerController {
     @Autowired
     CustomerService customerService;
     @PostMapping
-    public ResponseEntity<Customer> addCustomer(@RequestBody Customer customer){
-        Customer savedCust= customerService.addCust(customer);
+    public ResponseEntity<Customer> custmerRegister(@RequestBody Customer customer){
+        Customer savedCust= customerService.registerCustomer(customer);
         return new ResponseEntity<>(savedCust, HttpStatus.OK);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Customer customer){
+
+        return new ResponseEntity<>(customerService.login(customer.getEmail(),customer.getPassword()),HttpStatus.OK);
     }
 }
